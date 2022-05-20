@@ -5,6 +5,7 @@ import com.adrian.recipe.enums.Difficulty;
 import com.adrian.recipe.repositories.CategoryRepository;
 import com.adrian.recipe.repositories.RecipeRepository;
 import com.adrian.recipe.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class RecipeBootstrap implements CommandLineRunner {
 
@@ -30,6 +32,8 @@ public class RecipeBootstrap implements CommandLineRunner {
     @Override
     public void run(String... args) {
         recipeRepository.saveAll(getRecipes());
+
+        log.debug("Completed loading data to db");
     }
 
     private List<Recipe> getRecipes() {
