@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -20,11 +21,18 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    final Long ID = 1L;
+
+    Recipe recipe;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
         recipeService = new RecipeServiceImpl(recipeRepository);
+
+        recipe = new Recipe();
+        recipe.setId(ID);
     }
 
     @Test
@@ -40,5 +48,15 @@ public class RecipeServiceImplTest {
 
         assertEquals(recipesToReturn.size(), recipes.size());
         verify(recipeRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void findById() {
+
+        when(recipeRepository.findById(anyLong())).thenReturn(Optional.of(recipe));
+
+        Recipe returnedRecipe = recipeService.findById(ID);
+
+        assertEquals(ID, returnedRecipe.getId());
     }
 }
