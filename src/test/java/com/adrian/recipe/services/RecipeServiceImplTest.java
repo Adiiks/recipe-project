@@ -1,5 +1,6 @@
 package com.adrian.recipe.services;
 
+import com.adrian.recipe.commands.RecipeCommand;
 import com.adrian.recipe.converters.RecipeCommandToRecipe;
 import com.adrian.recipe.converters.RecipeToRecipeCommand;
 import com.adrian.recipe.domain.Recipe;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class RecipeServiceImplTest {
@@ -23,7 +25,10 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
     RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
     RecipeCommandToRecipe recipeCommandToRecipe;
 
     final Long ID = 1L;
@@ -63,5 +68,26 @@ public class RecipeServiceImplTest {
         Recipe returnedRecipe = recipeService.findById(ID);
 
         assertEquals(ID, returnedRecipe.getId());
+    }
+
+    @Test
+    public void getRecipeCommandByIdTest() throws Exception {
+
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+
+        when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
+
+        RecipeCommand commandById = recipeService.findCommandById(1L);
+
+        assertNotNull("Null recipe returned", commandById);
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
     }
 }
