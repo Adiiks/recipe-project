@@ -1,5 +1,7 @@
 package com.adrian.recipe.services;
 
+import com.adrian.recipe.converters.RecipeCommandToRecipe;
+import com.adrian.recipe.converters.RecipeToRecipeCommand;
 import com.adrian.recipe.domain.Recipe;
 import com.adrian.recipe.repositories.RecipeRepository;
 import org.junit.Before;
@@ -21,6 +23,9 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    RecipeToRecipeCommand recipeToRecipeCommand;
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     final Long ID = 1L;
 
     Recipe recipe;
@@ -29,7 +34,7 @@ public class RecipeServiceImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
 
         recipe = new Recipe();
         recipe.setId(ID);
