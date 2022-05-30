@@ -1,6 +1,8 @@
 package com.adrian.recipe.controllers;
 
 import com.adrian.recipe.commands.IngredientCommand;
+import com.adrian.recipe.commands.RecipeCommand;
+import com.adrian.recipe.commands.UnitOfMeasureCommand;
 import com.adrian.recipe.services.IngredientService;
 import com.adrian.recipe.services.RecipeService;
 import com.adrian.recipe.services.UnitOfMeasureService;
@@ -64,5 +66,25 @@ public class IngredientController {
 
         return "redirect:/recipe/" + savedIngredient.getRecipeId() + "/ingredient/"
                 + savedIngredient.getId() + "/show";
+    }
+
+    @GetMapping("/{recipeId}/ingredient/new")
+    public String newIngredient(@PathVariable Long recipeId, Model model){
+
+        //make sure we have a good id value
+        RecipeCommand recipeCommand = recipeService.findCommandById(recipeId);
+        //todo raise exception if null
+
+        //need to return back parent id for hidden form property
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(recipeId);
+        model.addAttribute("ingredient", ingredientCommand);
+
+        //init uom
+        ingredientCommand.setUom(new UnitOfMeasureCommand());
+
+        model.addAttribute("uomList",  unitOfMeasureService.listAllUoms());
+
+        return "recipe/ingredient/ingredientForm";
     }
 }
