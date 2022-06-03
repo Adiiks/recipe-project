@@ -4,6 +4,7 @@ import com.adrian.recipe.commands.RecipeCommand;
 import com.adrian.recipe.converters.RecipeCommandToRecipe;
 import com.adrian.recipe.converters.RecipeToRecipeCommand;
 import com.adrian.recipe.domain.Recipe;
+import com.adrian.recipe.exceptions.NotFoundException;
 import com.adrian.recipe.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +69,14 @@ public class RecipeServiceImplTest {
         Recipe returnedRecipe = recipeService.findById(ID);
 
         assertEquals(ID, returnedRecipe.getId());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void findByIdNotFound() {
+
+        when(recipeRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        recipeService.findById(ID);
     }
 
     @Test

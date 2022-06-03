@@ -2,6 +2,7 @@ package com.adrian.recipe.controllers;
 
 import com.adrian.recipe.commands.RecipeCommand;
 import com.adrian.recipe.domain.Recipe;
+import com.adrian.recipe.exceptions.NotFoundException;
 import com.adrian.recipe.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,15 @@ public class RecipeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/show"))
                 .andExpect(model().attributeExists("recipe"));
+    }
+
+    @Test
+    public void getRecipeNotFound() throws Exception {
+
+        when(recipeService.findById(anyLong())).thenThrow(new NotFoundException());
+
+        mockMvc.perform(get("/recipe/" + ID + "/show"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
