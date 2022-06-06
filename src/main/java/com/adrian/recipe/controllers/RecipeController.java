@@ -7,13 +7,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 @Slf4j
 @Controller
 @RequestMapping("/recipe")
 public class RecipeController {
+
+    private static final String RECIPE_FORM_URL = "recipe/recipeForm";
 
     private final RecipeService recipeService;
 
@@ -34,11 +39,19 @@ public class RecipeController {
 
         model.addAttribute("recipe", new RecipeCommand());
 
-        return "recipe/recipeForm";
+        return RECIPE_FORM_URL;
     }
 
     @PostMapping
-    public String saveOrUpdate(@ModelAttribute RecipeCommand recipeToSave) {
+    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand recipeToSave, BindingResult result) {
+
+        if (result.hasErrors()) {
+
+            result.getAllErrors().forEach(objectError ->
+                    log.debug(objectError.toString()));
+
+            return RECIPE_FORM_URL;
+        }
 
         RecipeCommand savedRecipe = recipeService.saveRecipeCommand(recipeToSave);
 
@@ -50,7 +63,7 @@ public class RecipeController {
 
         model.addAttribute("recipe", recipeService.findCommandById(recipeId));
 
-        return "recipe/recipeForm";
+        return RECIPE_FORM_URL;
     }
 
     @GetMapping("/{recipeId}/delete")
